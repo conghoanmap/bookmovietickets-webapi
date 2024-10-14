@@ -1,0 +1,10 @@
+export { default as NotFound } from "./NotFound";
+export { default as Home } from "./Home";
+export { default as Dashboard } from "./dashboard/Dashboard";
+export { default as Login } from "./Login";
+export { default as Register } from "./Register";
+export { default as AdminNotFound } from "./AdminNotFound";
+export { default as Movie } from "./Movie";
+export { default as MovieManager } from "./dashboard/MovieManager";
+export { default as UserManager } from "./dashboard/UserManager";
+export { default as ShowTimeManager } from "./dashboard/ShowTimeManager";
