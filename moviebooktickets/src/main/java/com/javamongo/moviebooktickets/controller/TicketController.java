@@ -47,21 +47,21 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.checkSeat(showTimeId, seat));
     }
 
-    // Hủy vé
+    // (T.Anh)Hủy vé
     @GetMapping("/cancel/{id}")
     @PreAuthorize("hasAnyAuthority('Admin', 'Customer')")
     public ResponseEntity<?> cancelTicket(@PathVariable String id) {
         return ResponseEntity.ok(ticketService.cancelTicket(id));
     }
 
-    // Thống kê doanh thu theo n ngày gần nhất
+    // (T.Anh)Thống kê doanh thu theo n ngày gần nhất
     @GetMapping("/revenue/{n}")
     @PreAuthorize("hasAnyAuthority('Admin')")
     public ResponseEntity<?> getRevenue(@PathVariable int n) {
         return ResponseEntity.ok(ticketService.getRevenue(n));
     }
 
-    // Khách hàng đặt vé nhiều nhất (email)
+    //(Khánh) Khách hàng đặt vé nhiều nhất (email)
     @GetMapping("/most-customer")
     public ResponseEntity<?> getMostCustomer() {
         return ResponseEntity.ok(ticketService.getMostCustomer());

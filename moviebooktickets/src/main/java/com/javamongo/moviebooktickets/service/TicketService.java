@@ -54,12 +54,14 @@ public class TicketService {
             }
         }
         // Kiểm tra suất chiếu đã được chiếu chưa
-        ShowTime showTime = showTimeRepository.findById(ticket.getShowTimeId()).get();
-        if (showTime == null) {
+        ShowTime showTime = new ShowTime();
+        Optional<ShowTime> showTimeOptional = showTimeRepository.findById(ticket.getShowTimeId());
+        if (!showTimeOptional.isPresent()) {
             myResponse.setStatus(400);
             myResponse.setMessage("Không tìm thấy suất chiếu");
             return myResponse;
         } else {
+            showTime = showTimeOptional.get();
             if (showTime.getShowTimeDate().isAfter(java.time.LocalDate.now())
                     || showTime.getShowTimeDate().isEqual(java.time.LocalDate.now())) {
                 if (showTime.getStartTime().isBefore(java.time.LocalTime.now()) && showTime.getShowTimeDate()
@@ -108,7 +110,9 @@ public class TicketService {
         ticketCreate.setTotalPrice(ticket.getSeats().size() * showTime.getPrice());
         myResponse.setStatus(200);
         myResponse.setMessage("Đặt vé thành công");
-        myResponse.setData(ticketRepository.save(ticketCreate));
+        Ticket ticketCreated = ticketRepository.save(ticketCreate);
+        ticketCreate.setId(ticketCreated != null ? ticketCreated.getId() : "TicketId");
+        myResponse.setData(ticketCreate);
         return myResponse;
     }
 

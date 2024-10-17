@@ -38,7 +38,7 @@ public class ShowTimeController {
         return ResponseEntity.ok(showTimeService.addShowTime(showTime));
     }
 
-    // Lấy danh sách các ghế đã được đặt của suất chiếu cụ thể
+    // (Hoan)Lấy danh sách các ghế đã được đặt của suất chiếu cụ thể
     @GetMapping("/booked")
     public ResponseEntity<?> getBookedSeats(@RequestParam String showTimeId) {
         return ResponseEntity.ok(showTimeService.getBookedSeats(showTimeId));

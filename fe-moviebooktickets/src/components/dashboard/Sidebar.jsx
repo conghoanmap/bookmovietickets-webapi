@@ -30,8 +30,8 @@ const Sidebar = (props) => {
           link: "/profile",
         },
         {
-          title: "Bảo mật",
-          link: "#",
+          title: "Đổi mật khẩu",
+          link: "/change-password",
         },
         {
           title: "Đăng xuất",

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,15 +20,17 @@ import lombok.NoArgsConstructor;
 public class Movie {
     @Id
     private String id; // Mã phim
+    @NotBlank(message = "Tên phim không được để trống")
     private String name; // Tên phim
+    @NotBlank(message = "Mô tả không được để trống")
     private String description; // Mô tả
-    @Min(60)
+    @Min(value = 1, message = "Thời lượng phim phải lớn hơn 0")
     private int duration; // Thời lượng
     private List<String> languages; // Ngôn ngữ
     private Date releaseDate; // Ngày công chiếu
-    @URL
+    @URL(message = "Link ảnh không hợp lệ")
     private String poster; // Ảnh poster
-    @URL
+    @URL(message = "Link trailer không hợp lệ")
     private String trailer; // Link trailer (frame youtube)
     private List<String> categories; // Nhúng danh sách thể loại
 }

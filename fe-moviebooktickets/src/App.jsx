@@ -25,6 +25,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import HistoryBooking from "./pages/HistoryBooking";
+import ChangePassword from "./pages/ChangePassword";
 
 const App = () => {
   const context = useContext(GlobalContext);
@@ -41,6 +42,9 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/history-booking" element={<HistoryBooking />} />
+        {context.isAuthenticated && (
+          <Route path="/change-password" element={<ChangePassword />} />
+        )}
         {context.isAuthenticated && (
           <Route path="/success-booking" element={<SuccessBooking />} />
         )}

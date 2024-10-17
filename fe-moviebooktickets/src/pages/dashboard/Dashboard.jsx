@@ -251,7 +251,7 @@ const Dashboard = () => {
         </div>
         <div className="border border-solid p-3 bg-white rounded-lg grid">
           <h5 className="my-3 text-center">
-            Doanh thu trong {dateNumber} ngày gần nhất(Hoan)
+            Doanh thu trong {dateNumber} ngày gần nhất(T.Anh)
           </h5>
           <div className="mx-auto my-3">
             <div className="mt-2">
@@ -312,7 +312,7 @@ const Dashboard = () => {
           </table>
         </div>
         <div className="border border-solid p-3 bg-white rounded-lg grid">
-          <h5 className="my-3 text-center">Khách hàng nổi trội nhất(Hoan)</h5>
+          <h5 className="my-3 text-center">Khách hàng nổi trội nhất(Khánh)</h5>
           <img
             className="m-auto"
             src="https://cdn-icons-png.flaticon.com/128/10650/10650732.png"
@@ -329,7 +329,7 @@ const Dashboard = () => {
           </h4>
         </div>
         <div className="border border-solid p-3 bg-white rounded-lg grid">
-          <h5 className="my-3">Top 3 phim có doanh thu cao nhất(Hoan)</h5>
+          <h5 className="my-3">Top 3 phim có doanh thu cao nhất(Khánh)</h5>
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>
@@ -367,7 +367,7 @@ const Dashboard = () => {
           </table>
         </div>
         <div className="border border-solid p-3 bg-white rounded-lg grid h-80 overflow-y-auto">
-          <h5 className="my-3">Doanh thu cho từng phòng(Hoan)</h5>
+          <h5 className="my-3">Doanh thu cho từng phòng(Khánh)</h5>
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
               <tr>

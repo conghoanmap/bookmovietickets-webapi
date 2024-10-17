@@ -15,6 +15,12 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const [formError, setFormError] = useState({
+    email: "",
+    name: "",
+    password: "",
+    confirmPassword: ""
+  });
 
   useEffect(() => {
     if (count <= 0) return;
@@ -27,7 +33,7 @@ const Register = () => {
   const handleRegister = async () => {
     try {
       const response = await AccountService.Register(formData);
-      // console.log(response);
+      setFormError({}); // Reset form error
       if (response.statusCode === 200) {
         setSuccessRegister(true);
         // 5s sau chuyển hướng về trang login
@@ -37,8 +43,15 @@ const Register = () => {
         setCount(5); // Bắt đầu đếm từ 1
         setIsCounting(true); // Bắt đầu đếm
       }
+      else{
+        alert(response.message);
+      }
     } catch (error) {
       console.log(error);
+      
+      // Validation
+      console.log(error?.response?.data);
+      setFormError(error?.response?.data);
     }
   };
 
@@ -77,6 +90,7 @@ const Register = () => {
                   setFormData({ ...formData, email: e.target.value })
                 }
               />
+              <span className="text-red-500 text-sm">{formError.email}</span>
             </div>
           </div>
           <div>
@@ -99,6 +113,7 @@ const Register = () => {
                   setFormData({ ...formData, name: e.target.value })
                 }
               />
+              <span className="text-red-500 text-sm">{formError.name}</span>
             </div>
           </div>
 
@@ -124,6 +139,7 @@ const Register = () => {
                   setFormData({ ...formData, password: e.target.value })
                 }
               />
+              <span className="text-red-500 text-sm">{formError.password}</span>
             </div>
           </div>
           <div>
@@ -148,6 +164,7 @@ const Register = () => {
                   setFormData({ ...formData, confirmPassword: e.target.value })
                 }
               />
+              <span className="text-red-500 text-sm">{formError.confirmPassword}</span>
             </div>
             {successRegister && (
               <div className="mt-2">

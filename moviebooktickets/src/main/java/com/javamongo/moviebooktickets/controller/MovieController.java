@@ -18,6 +18,8 @@ import java.time.LocalDate;
 import com.javamongo.moviebooktickets.entity.Movie;
 import com.javamongo.moviebooktickets.service.MovieService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/v1/movie")
 public class MovieController {
@@ -42,7 +44,7 @@ public class MovieController {
 
     @PostMapping
     @PreAuthorize("hasAnyAuthority('Admin')")
-    public ResponseEntity<?> addMovie(@RequestBody Movie movie) {
+    public ResponseEntity<?> addMovie(@Valid @RequestBody Movie movie) {
         return ResponseEntity.ok(movieService.saveMovie(movie));
     }
 
@@ -59,7 +61,7 @@ public class MovieController {
         return ResponseEntity.ok(movieService.deleteMovie(id));
     }
 
-    // Top 3 phim có doanh thu cao nhất
+    //(Khánh) Top 3 phim có doanh thu cao nhất
     @GetMapping("/top-revenue")
     public ResponseEntity<?> getTopRevenueMovies() {
         return ResponseEntity.ok(movieService.getTopRevenueMovies());

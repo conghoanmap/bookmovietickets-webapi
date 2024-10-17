@@ -15,7 +15,7 @@ const Login = () => {
     try {
       const response = await AccountService.Login(formData);
       // console.log(response);
-      
+
       if (response.statusCode === 200) {
         context.setIsAuthenticated(true);
         context.setRoles(response.roles);
@@ -27,6 +27,24 @@ const Login = () => {
       }
     } catch (error) {
       alert("Đăng nhập thất bại, lỗi hệ thống");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (formData.email === "") {
+      alert("Vui lòng nhập email");
+      return;
+    } else {
+      try {
+        const response = await AccountService.ResetPassword(formData.email);
+        if (response.status === 200) {
+          alert("Mật khẩu mới đã được gửi tới email của bạn");
+        } else {
+          alert("Email không tồn tại");
+        }
+      } catch (error) {
+        alert("Lỗi hệ thống");
+      }
     }
   };
 
@@ -77,12 +95,12 @@ const Login = () => {
                 Mật khẩu
               </label>
               <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-semibold text-rose-600 hover:text-rose-500"
+                <p
+                  onClick={handleResetPassword}
+                  className="cursor-pointer font-semibold text-rose-600 hover:text-rose-500"
                 >
-                  Quên mật khẩu?(chưa làm)
-                </a>
+                  Quên mật khẩu?
+                </p>
               </div>
             </div>
             <div className="mt-2">

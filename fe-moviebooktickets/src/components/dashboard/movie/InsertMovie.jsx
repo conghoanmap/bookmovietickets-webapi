@@ -18,6 +18,7 @@ const InsertMovie = (props) => {
 
   const [formErrors, setFormErrors] = useState({
     name: "",
+    description: "",
     duration: "",
     trailer: "",
     poster: "",
@@ -48,20 +49,6 @@ const InsertMovie = (props) => {
     }
   };
 
-  useEffect(() => {
-    setFormErrors({
-      name: formData.name ? "" : "Vui lòng nhập tên phim",
-      duration: formData.duration > 45 ? "" : "Vui lòng nhập thời lượng phim",
-      trailer: isValidURL(formData.trailer)
-        ? ""
-        : "Vui lòng nhập link trailer hợp lệ",
-      poster: isValidURL(formData.poster)
-        ? ""
-        : "Vui lòng nhập link poster hợp lệ",
-    });
-    console.log(formData);
-  }, [formData]);
-
   const handleInsertMovie = async () => {
     setFormData({
       name: formData.name,
@@ -73,14 +60,6 @@ const InsertMovie = (props) => {
       categories: categoriesSelect,
       languages: languages,
     });
-    if (
-      formErrors.name ||
-      formErrors.duration ||
-      formErrors.trailer ||
-      formErrors.poster
-    ) {
-      return;
-    }
     try {
       const response = await MovieService.InsertMovie(formData);
       alert(response.message);
@@ -88,7 +67,7 @@ const InsertMovie = (props) => {
         props.addMovieDisplay(response.data);
       }
     } catch (error) {
-      console.log(error);
+      setFormErrors(error?.response?.data);
     }
   };
 

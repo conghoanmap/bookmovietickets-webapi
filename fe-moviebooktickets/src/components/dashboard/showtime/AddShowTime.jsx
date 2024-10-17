@@ -30,10 +30,10 @@ const AddShowTime = (props) => {
 
     try {
       const response = await ShowTimeService.InsertShowTime(showTime);
-      console.log(response);
+      // console.log(response);
+      alert(response?.message);
       if (response.status === 200) {
         props?.addShowTimeDisplay(response.data);
-        alert("Thêm suất chiếu thành công");
       }
     } catch (error) {
       console.log(error);
@@ -84,7 +84,7 @@ const AddShowTime = (props) => {
                 htmlFor="first-name"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Tên phim
+                Giờ chiếu
               </label>
               <div className="mt-2">
                 <input

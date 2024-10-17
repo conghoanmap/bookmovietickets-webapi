@@ -52,7 +52,13 @@ const HistoryBooking = () => {
                 Phim
               </th>
               <th scope="col" className="px-6 py-3">
-                Số ghế
+                Ngày chiếu
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Giờ chiếu
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Ghế
               </th>
               <th scope="col" className="px-6 py-3">
                 Tổng tiền
@@ -80,7 +86,9 @@ const HistoryBooking = () => {
                 <td className="px-6 py-4"><Link className="hover:text-rose-600" to={`/movie-detail/${ticket?.showTime?.movie?.id}`}>
                 {ticket?.showTime?.movie?.name}
                 </Link></td>
-                <td className="px-6 py-4">{ticket?.seats?.length}</td>
+                <td className="px-6 py-4">{formatDateYYYYMMDD(ticket?.showTime?.showTimeDate)}</td>
+                <td className="px-6 py-4">{ticket?.showTime?.startTime}</td>
+                <td className="px-6 py-4">{ticket?.seats?.map((seat) => seat).join(", ")}</td>
                 <td className="px-6 py-4">{formatPrice(ticket?.totalPrice)}</td>
                 <td className="px-6 py-4">
                   <span

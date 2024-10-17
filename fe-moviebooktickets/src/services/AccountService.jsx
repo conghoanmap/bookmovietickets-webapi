@@ -108,6 +108,36 @@ export default class AccountService {
     }
   }
 
+  static async ChangePassword(formData) {
+    try {
+      const response = await axios.put(
+        `${this.BASE_URL}/change-password`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async ResetPassword(email) {
+    console.log(email);
+    
+    try {
+      const response = await axios.get(
+        `${this.BASE_URL}/reset-password?email=${email}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Đăng xuất
   static Logout() {
     localStorage.removeItem("token");

@@ -130,6 +130,7 @@ public class MovieService {
         return myResponse;
     }
 
+    // (Khánh) Top 3 phim có doanh thu cao nhất
     public MyResponse<List<MovieRevenue>> getTopRevenueMovies() {
         MyResponse<List<MovieRevenue>> myResponse = new MyResponse<>();
         Aggregation aggregation = Aggregation.newAggregation(
@@ -153,6 +154,7 @@ public class MovieService {
         return myResponse;
     }
 
+    // (Huy)Phim có thời lượng dưới 90 phút và được phát hành trong năm 2024
     public MyResponse<List<Movie>> getShortMovies() {
         MyResponse<List<Movie>> myResponse = new MyResponse<>();
         LocalDate start = LocalDate.of(2024, 1, 1);
@@ -166,6 +168,7 @@ public class MovieService {
 
     }
 
+    // (Huy) Truyền vào tên phim, tính doanh thu của phim đó
     public MyResponse<MovieRevenue> getRevenueByMovieName(String name) {
         MyResponse<MovieRevenue> myResponse = new MyResponse<>();
         Aggregation aggregation = Aggregation.newAggregation(
@@ -250,8 +253,8 @@ public class MovieService {
 
         // Tạo Aggregation
         Aggregation aggregation = Aggregation.newAggregation(
-            Aggregation.match(Criteria.where("showTimeDate").gte(today).lte(sevenDaysLater)
-            .and("movie._id").is(new ObjectId(movieId))),
+                Aggregation.match(Criteria.where("showTimeDate").gte(today).lte(sevenDaysLater)
+                        .and("movie._id").is(new ObjectId(movieId))),
                 Aggregation.group("showTimeDate")
                         .push("$$ROOT").as("showtimes"),
                 Aggregation.sort(Sort.by(Sort.Direction.ASC, "date")));

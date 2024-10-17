@@ -137,6 +137,15 @@ const Header = (props) => {
                           Tài khoản của tôi
                         </Link>
                       </MenuItem>
+                      <MenuItem>
+                        <Link
+                          to="/change-password"
+                          className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                          role="menuitem"
+                        >
+                          Đổi mật khẩu
+                        </Link>
+                      </MenuItem>
 
                       <MenuItem>
                         <Link

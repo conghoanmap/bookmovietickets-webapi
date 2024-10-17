@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.javamongo.moviebooktickets.dto.account.ChangePasswordRequest;
 import com.javamongo.moviebooktickets.dto.account.LoginRequest;
 import com.javamongo.moviebooktickets.dto.account.RegisterRequest;
 import com.javamongo.moviebooktickets.service.UserService;
@@ -83,5 +85,18 @@ public class AccountController {
     @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<?> GetByEmail(@RequestParam String email) {
         return ResponseEntity.ok(userService.GetByEmail(email));
+    }
+
+    @PutMapping("/change-password")
+    @PreAuthorize("hasAnyAuthority('Admin', 'Customer')")
+    public ResponseEntity<?> ChangePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return ResponseEntity.ok(userService.ChangePassword(email, changePasswordRequest));
+    }
+
+    @GetMapping("/reset-password")
+    public ResponseEntity<?> ResetPassword(@RequestParam String email) {
+        return ResponseEntity.ok(userService.ResetPassword(email));
     }
 }

@@ -12,15 +12,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.javamongo.moviebooktickets.dto.MyResponse;
+import com.javamongo.moviebooktickets.dto.account.ChangePasswordRequest;
 import com.javamongo.moviebooktickets.dto.account.LoginRegisterResponse;
 import com.javamongo.moviebooktickets.dto.account.LoginRequest;
 import com.javamongo.moviebooktickets.dto.account.RegisterRequest;
 import com.javamongo.moviebooktickets.entity.AppUser;
 import com.javamongo.moviebooktickets.repository.AppUserRepository;
+import com.javamongo.moviebooktickets.util.RandomStringGenerator;
+
 
 @Service
 public class UserService {
-
+    
+    @Autowired
+    private EmailSenderService emailSenderService;
     @Autowired
     private AppUserRepository usersRepo;
     @Autowired
@@ -30,7 +35,6 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    
     public LoginRegisterResponse Login(LoginRequest loginRequest) {
         LoginRegisterResponse response = new LoginRegisterResponse();
 
@@ -149,7 +153,7 @@ public class UserService {
         MyResponse<List<AppUser>> response = new MyResponse<>();
         try {
             List<AppUser> appusers = usersRepo.findAll();
-            //Bỏ qua tài khoản của chính người dùng đang đăng nhập
+            // Bỏ qua tài khoản của chính người dùng đang đăng nhập
             appusers.removeIf(user -> user.getEmail().equals(email));
             response.setStatus(200);
             response.setMessage("Lấy thông tin thành công!");
@@ -213,6 +217,68 @@ public class UserService {
             response.setStatus(200);
             response.setMessage("Lấy thông tin thành công!");
             response.setData(appuser.get());
+        } catch (Exception e) {
+            response.setStatus(500);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+    public MyResponse<?> ChangePassword(String email, ChangePasswordRequest changePasswordRequest) {
+        MyResponse<?> response = new MyResponse<>();
+        try {
+            Optional<AppUser> appuser = usersRepo.findByEmail(email);
+            if (appuser.isEmpty()) {
+                response.setStatus(404);
+                response.setMessage("Tài khoản không tồn tại!");
+                return response;
+            }
+            AppUser user = appuser.get();
+            if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+                response.setStatus(400);
+                response.setMessage("Mật khẩu cũ không đúng!");
+                return response;
+            }
+            if (!changePasswordRequest.getNewPassword().equals(changePasswordRequest.getConfirmPassword())) {
+                response.setStatus(400);
+                response.setMessage("Mật khẩu mới không khớp!");
+                return response;
+            }
+            // Kiểm tra mật khẩu mới có khớp với mật khẩu cũ không
+            if (passwordEncoder.matches(changePasswordRequest.getNewPassword(), user.getPassword())) {
+                response.setStatus(400);
+                response.setMessage("Mật khẩu mới không được trùng với mật khẩu cũ!");
+                return response;
+            }
+            user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+            usersRepo.save(user);
+            response.setStatus(200);
+            response.setMessage("Đổi mật khẩu thành công!");
+        } catch (Exception e) {
+            response.setStatus(500);
+            response.setMessage(e.getMessage());
+        }
+        return response;
+    }
+
+    public MyResponse<?> ResetPassword(String email) {
+        MyResponse<?> response = new MyResponse<>();
+        // Tạo mật khẩu ngẫu nhiên có 32 kí tự
+        String newPassword = RandomStringGenerator.generateRandomString(32);
+        try {
+            Optional<AppUser> appuser = usersRepo.findByEmail(email);
+            if (appuser.isEmpty()) {
+                response.setStatus(404);
+                response.setMessage("Email không tồn tại!");
+                return response;
+            }
+            AppUser user = appuser.get();
+            user.setPassword(passwordEncoder.encode(newPassword));
+            usersRepo.save(user);
+            // Gửi email thông báo mật khẩu mới
+            emailSenderService.sendEmail(email, "Reset Password", "Mật khẩu mới của bạn là: " + newPassword);
+            response.setStatus(200);
+            response.setMessage("Một mật khẩu mới đã được gửi đến email của bạn!");
         } catch (Exception e) {
             response.setStatus(500);
             response.setMessage(e.getMessage());
