@@ -4,7 +4,8 @@ import { useLogout } from "../hooks";
 
 const ChangePassword = () => {
   const logout = useLogout();
-
+  const [success, setSuccess] = useState("");
+  const [errorResponse, setErrorResponse] = useState("");
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
@@ -19,9 +20,13 @@ const ChangePassword = () => {
     try {
       const response = await AccountService.ChangePassword(formData);
       //   console.log(response);
-      alert(response.message);
       if (response.status === 200) {
+        setSuccess(response?.message);
+        setErrorResponse("");
         logout();
+      } else {
+        setErrorResponse(response?.message);
+        setSuccess("");
       }
     } catch (error) {
       setFormError(error.response?.data);
@@ -118,7 +123,12 @@ const ChangePassword = () => {
               </span>
             </div>
           </div>
-
+          {errorResponse && (
+            <div className="text-red-500 text-sm">{errorResponse}</div>
+          )}
+          {success && (
+            <div className="text-teal-500 text-sm">{success}</div>
+          )}
           <div>
             <button
               type="submit"

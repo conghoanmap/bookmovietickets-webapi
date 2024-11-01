@@ -39,16 +39,32 @@ public class TicketService {
     private MongoTemplate mongoTemplate;
 
     public MyResponse<Ticket> addTicket(TicketDto ticket) {
-        // int SEATS_SIZE = 70; // Số lượng ghế trong các phòng chiếu
 
         MyResponse<Ticket> myResponse = new MyResponse<>();
         List<Ticket> tickets = ticketRepository.findByShowTimeId(ticket.getShowTimeId());
         // Kiểm tra ghế đã được đặt chưa
         for (String seat : ticket.getSeats()) {
             for (Ticket t : tickets) {
-                if (t.getSeats().contains(seat)) {
+                // Kiểm tra kí tự đầu có từ A đến J hay không
+                // Kiểm tra 2 kí tự sau có từ 00 đến 10 hay không
+                if (seat.charAt(0) >= 'A' || seat.charAt(0) <= 'J') {
+                    // lấy 2 kí tự sau chuyển thành kiểu int
+                    int num = Integer.parseInt(seat.substring(1));
+                    // so sánh với 10
+                    if (num < 0 || num > 10) {
+                        myResponse.setStatus(400);
+                        myResponse.setMessage("Ghế " + seat + " không hợp lệ");
+                        return myResponse;
+                    } else {
+                        if (t.getSeats().contains(seat)) {
+                            myResponse.setStatus(400);
+                            myResponse.setMessage("Ghế " + seat + " đã được đặt");
+                            return myResponse;
+                        }
+                    }
+                } else {
                     myResponse.setStatus(400);
-                    myResponse.setMessage("Ghế " + seat + " đã được đặt");
+                    myResponse.setMessage("Ghế " + seat + " không hợp lệ");
                     return myResponse;
                 }
             }
@@ -142,20 +158,16 @@ public class TicketService {
     }
 
     // Hủy vé
-    public MyResponse<?> cancelTicket(String id) {
-        MyResponse<?> myResponse = new MyResponse<>();
+    public MyResponse<Double> cancelTicket(String id, String email) {
+        MyResponse<Double> myResponse = new MyResponse<>();
         Optional<Ticket> ticket = ticketRepository.findById(id);
-        // Chỉ được hủy khi thời gian hủy trước thời gian chiếu là 2 tiếng
-        if (ticket.isPresent()) {
-            ShowTime showTime = showTimeRepository.findById(ticket.get().getShowTime().getId()).get();
-            if (showTime.getShowTimeDate().isEqual(java.time.LocalDate.now())) {
-                if (showTime.getStartTime().minusHours(2).isBefore(java.time.LocalTime.now())) {
-                    myResponse.setStatus(400);
-                    myResponse.setMessage("Hết thời gian hủy vé");
-                    return myResponse;
-                }
-            }
+
+        if (email.length() < 1) {
+            myResponse.setStatus(400);
+            myResponse.setMessage("Bạn chưa đăng nhập");
+            return myResponse;
         }
+
         if (ticket.isPresent()) {
             ShowTime showTime = showTimeRepository.findById(ticket.get().getShowTime().getId()).get();
             if (showTime.getShowTimeDate().isBefore(java.time.LocalDate.now())) {
@@ -174,12 +186,33 @@ public class TicketService {
             myResponse.setMessage("Không tìm thấy vé");
             return myResponse;
         }
+
+        // Kiểm tra quyền hủy
+        if (!ticket.get().getEmail().equals(email)) {
+            myResponse.setStatus(400);
+            myResponse.setMessage("Không có quyền hủy vé");
+            return myResponse;
+        }
+
+        // Chỉ được hủy khi thời gian hủy trước thời gian chiếu là 2 tiếng
         if (ticket.isPresent()) {
+            ShowTime showTime = showTimeRepository.findById(ticket.get().getShowTime().getId()).get();
+            if (showTime.getShowTimeDate().isEqual(java.time.LocalDate.now())) {
+                if (showTime.getStartTime().minusHours(2).isBefore(java.time.LocalTime.now())) {
+                    myResponse.setStatus(400);
+                    myResponse.setMessage("Hết thời gian hủy vé");
+                    return myResponse;
+                }
+            }
+        }
+
+        if (ticket.isPresent()) {
+            double refund = 0;
             // Trả lại 50% tiền
             Optional<AppUser> user = userRepository.findByEmail(ticket.get().getEmail());
             if (user.isPresent()) {
-                user.get().setAccountBalance(user.get().getAccountBalance() + (ticket.get().getSeats().size()
-                        * ticket.get().getShowTime().getPrice()) / 2);
+                refund = (ticket.get().getSeats().size() * ticket.get().getShowTime().getPrice()) / 2;
+                user.get().setAccountBalance(user.get().getAccountBalance() + refund);
                 userRepository.save(user.get());
             } else {
                 myResponse.setStatus(400);
@@ -188,7 +221,9 @@ public class TicketService {
             }
             ticketRepository.deleteById(id);
             myResponse.setStatus(200);
-            myResponse.setMessage("Hủy vé thành công");
+            myResponse.setMessage("Hủy vé thành công, số tiền hoàn lại: "
+                    + refund);
+            myResponse.setData(refund);
             return myResponse;
         } else {
             myResponse.setStatus(400);

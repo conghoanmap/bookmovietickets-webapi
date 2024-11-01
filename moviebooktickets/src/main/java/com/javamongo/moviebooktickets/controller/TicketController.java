@@ -36,7 +36,9 @@ public class TicketController {
     public ResponseEntity<?> addTicket(@RequestBody TicketDto ticket) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        ticket.setEmail(email);
+        if (ticket.getEmail() == null) {
+            ticket.setEmail(email);
+        }
         return ResponseEntity.ok(ticketService.addTicket(ticket));
     }
 
@@ -51,7 +53,9 @@ public class TicketController {
     @GetMapping("/cancel/{id}")
     @PreAuthorize("hasAnyAuthority('Admin', 'Customer')")
     public ResponseEntity<?> cancelTicket(@PathVariable String id) {
-        return ResponseEntity.ok(ticketService.cancelTicket(id));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return ResponseEntity.ok(ticketService.cancelTicket(id, email));
     }
 
     // (T.Anh)Thống kê doanh thu theo n ngày gần nhất
@@ -61,19 +65,19 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getRevenue(n));
     }
 
-    //(Khánh) Khách hàng đặt vé nhiều nhất (email)
+    // (Khánh) Khách hàng đặt vé nhiều nhất (email)
     @GetMapping("/most-customer")
     public ResponseEntity<?> getMostCustomer() {
         return ResponseEntity.ok(ticketService.getMostCustomer());
     }
 
-    //(Huy) Số vé đã bán cho từng bộ phim
+    // (Huy) Số vé đã bán cho từng bộ phim
     @GetMapping("/most-movie")
     public ResponseEntity<?> getMostMovie() {
         return ResponseEntity.ok(ticketService.getMostMovie());
     }
 
-    //(Khánh) Tính tổng số vé đã bán trong 1 ngày nhất định
+    // (Khánh) Tính tổng số vé đã bán trong 1 ngày nhất định
     @GetMapping("/total-ticket")
     public ResponseEntity<?> getTotalTicket(@RequestBody StartEndDate date) {
         return ResponseEntity.ok(ticketService.getTotalTicket(date));
@@ -100,7 +104,7 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.getRevenueRoom());
     }
 
-    // Tính doanh thu theo từng tháng trong 1 năm trở lại 
+    // Tính doanh thu theo từng tháng trong 1 năm trở lại
     @GetMapping("/revenue-year")
     @PreAuthorize("hasAnyAuthority('Admin')")
     public ResponseEntity<?> getRevenueYear() {

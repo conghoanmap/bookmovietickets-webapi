@@ -9,7 +9,7 @@ const useLogout = () => {
 
   const logout = () => {
     context.setIsAuthenticated(false);
-    localStorage.removeItem("roles");
+    context.setRoles([]);
     localStorage.removeItem("token");
     navigate("/login");
   };

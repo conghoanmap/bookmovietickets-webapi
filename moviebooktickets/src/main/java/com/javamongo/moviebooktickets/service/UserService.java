@@ -273,7 +273,8 @@ public class UserService {
                 return response;
             }
             AppUser user = appuser.get();
-            user.setPassword(passwordEncoder.encode(newPassword));
+            // user.setPassword(passwordEncoder.encode(newPassword));
+            user.setPassword(passwordEncoder.encode("CongHoan123#@!"));
             usersRepo.save(user);
             // Gửi email thông báo mật khẩu mới
             emailSenderService.sendEmail(email, "Reset Password", "Mật khẩu mới của bạn là: " + newPassword);

@@ -57,7 +57,7 @@ public class TicketServiceTest {
         // Mock dữ liệu
         ShowTime showTime = new ShowTime();
         showTime.setId("6709d25aedb67755ac4abe8a");
-        showTime.setShowTimeDate(LocalDate.of(2024, 10, 20));
+        showTime.setShowTimeDate(LocalDate.of(2024, 10, 31));
         showTime.setStartTime(LocalTime.of(21, 30, 00));
         showTime.setPrice(45000);
 
@@ -88,7 +88,7 @@ public class TicketServiceTest {
         // Mock dữ liệu
         ShowTime showTime = new ShowTime();
         showTime.setId("6709d25aedb67755ac4abe8a");
-        showTime.setShowTimeDate(LocalDate.of(2024, 10, 20));
+        showTime.setShowTimeDate(LocalDate.of(2024, 10, 31));
         showTime.setStartTime(LocalTime.of(21, 30, 00));
         showTime.setPrice(45000);
 
@@ -117,12 +117,18 @@ public class TicketServiceTest {
     public void testAddTicket_SeatAlreadyBooked() {
         ShowTime showTime = new ShowTime();
         showTime.setId("6709d25aedb67755ac4abe8a");
+        showTime.setShowTimeDate(LocalDate.of(2024, 10, 31));
+        showTime.setStartTime(LocalTime.of(21, 30, 00));
         Ticket ticket = new Ticket();
         ticket.setSeats(List.of("A01"));
+        ticket.setShowTime(showTime);
+        AppUser user = new AppUser();
+        user.setEmail("hoan39800@gmail.com");
         // Mock dữ liệu
 
         when(showTimeRepository.findById(ticketDto.getShowTimeId())).thenReturn(Optional.of(showTime));
         when(ticketRepository.findByShowTimeId(ticketDto.getShowTimeId())).thenReturn(List.of(ticket));
+        when(userRepository.findByEmail(ticketDto.getEmail())).thenReturn(Optional.of(user));
         MyResponse<Ticket> response = ticketService.addTicket(ticketDto);
 
         assertEquals(400, response.getStatus());
@@ -144,7 +150,7 @@ public class TicketServiceTest {
         assertEquals("Không tìm thấy suất chiếu", response.getMessage());
     }
 
-    @DisplayName("Test đặt vé cho suất chiếu đã chiếu")
+    @DisplayName("Test đặt vé cho trường hợp số dư không đủ")
     @Test
     public void testAddTicket_InsufficientBalance() {
         // Mock dữ liệu cho trường hợp số dư không đủ

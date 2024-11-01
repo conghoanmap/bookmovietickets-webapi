@@ -4,6 +4,7 @@ import { GlobalContext } from "../contexts/GlobalProvider";
 import { AccountService } from "../services";
 
 const Register = () => {
+  const [error, setError] = useState("");
   const [count, setCount] = useState(5);
   const [isCounting, setIsCounting] = useState(false);
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ const Register = () => {
   }, [isCounting, count]);
 
   const handleRegister = async () => {
+    console.log(formData);
+    
     try {
       const response = await AccountService.Register(formData);
       setFormError({}); // Reset form error
@@ -44,7 +47,7 @@ const Register = () => {
         setIsCounting(true); // Bắt đầu đếm
       }
       else{
-        alert(response.message);
+        setError(response?.message);
       }
     } catch (error) {
       console.log(error);
@@ -173,6 +176,13 @@ const Register = () => {
                     Đăng kí thành công, bạn sẽ được chuyển về trang đăng nhập
                     sau {count}s
                   </span>
+                </div>
+              </div>
+            )}
+            {error && (
+              <div className="mt-2">
+                <div className="flex items-center justify-between text-red-500">
+                  <span>{error}</span>
                 </div>
               </div>
             )}

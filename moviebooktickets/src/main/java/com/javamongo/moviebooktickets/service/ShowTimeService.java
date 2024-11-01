@@ -83,6 +83,12 @@ public class ShowTimeService {
                 }
             }
         }
+        // Giá vé phải lớn hơn 0 và phải là bội số của 5000
+        if (showTime.getPrice() <= 0 || showTime.getPrice() % 5000 != 0) {
+            myResponse.setStatus(400);
+            myResponse.setMessage("Giá vé phải lớn hơn 0 và phải là bội số của 5000");
+            return myResponse;
+        }
         ShowTime showTimeEntity = new ShowTime();
         showTimeEntity.setShowTimeDate(showTime.getShowTimeDate());
         showTimeEntity.setStartTime(showTime.getStartTime());

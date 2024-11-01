@@ -62,6 +62,7 @@ const App = () => {
         )}
         <Route path="*" element={<NotFound />} />
       </Route>
+      
 
       {/* Dashboard */}
       {context.isAuthenticated ? (
